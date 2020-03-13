@@ -1,0 +1,29 @@
+---
+- name: Task 13 - User Conditionals to Control Play execution
+  hosts: all
+  become: true
+
+  vars:
+    my_sysctl:
+      - name: vm.swappiness
+        value: 10
+    required_memory: 7900
+
+  tasks:
+
+      - name: Configure kernel attributes - {{ my_sysctl }}
+        sysctl:
+          name: "{{ item.name }}"
+          value: "{{ item.value }}"
+          state: present
+        loop: "{{ my_sysctl }}"
+        when: 
+          - ansible_facts['memtotal_mb'] >= required_memory
+
+      - name: Show Failed system requirments met
+        fail:
+          msg: "Server memory is {{ ansible_facts['memtotal_mb'] }} MB. You required {{ required_memory }} MB."
+        when: >
+          ansible_facts['memtotal_mb'] <= required_memory
+        ignore_errors: yes
+

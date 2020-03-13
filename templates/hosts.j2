@@ -1,0 +1,5 @@
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
+{{ hostvars['srva']['ansible_default_ipv4']['address'] }} {{ hostvars['srva']['ansible_fqdn'] }} {{ hostvars['srva']['ansible_hostname'] }}
+{{ hostvars['srvb']['ansible_default_ipv4']['address'] }} {{ hostvars['srvb']['ansible_fqdn'] }} {{ hostvars['srvb']['ansible_hostname'] }}

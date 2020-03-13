@@ -1,0 +1,31 @@
+---
+# tasks file for sample-apache
+- name: Install required packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ my_role_packages }}"
+
+- name: Start and Enable {{ my_role_services }}
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ my_role_services }}"
+
+- name: Open Fire port for {{ my_role_fw_rules }}
+  firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+  loop: "{{ my_role_fw_rules }}"
+
+- name: Deploy index file
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart httpd

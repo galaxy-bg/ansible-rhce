@@ -1,0 +1,13 @@
+---
+- name: Generate HW report via Ansible
+  hosts: all
+  become: true
+  vars:
+    file_path: /home/devops
+
+  tasks:
+    - name: Create HW report
+      template:
+        src: files/report.j2
+        dest: "{{ file_path }}/report-{{ ansible_facts['hostname'] }}.txt" 
+      delegate_to: localhost

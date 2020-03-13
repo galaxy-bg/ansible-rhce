@@ -1,0 +1,12 @@
+---
+# Task 16 - Software packages
+- name: Softare packages
+  hosts: all
+  become: true
+  tasks:
+    
+    - name: Install required package based on host groups
+      yum:
+        name: "{{ my_packages }}"
+        state: present
+      when: ('dev' in group_names) or ('prod' in group_names)

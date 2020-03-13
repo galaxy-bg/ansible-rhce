@@ -1,0 +1,5 @@
+# Task3 - File Content - Host group variable
+full_desc: Production
+my_packages:
+  - lsof
+  - mailx

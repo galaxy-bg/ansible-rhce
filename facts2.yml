@@ -1,0 +1,31 @@
+---
+- name: Deploy custom2 facts to managed serevers
+  hosts: dev
+  become: true
+  vars:
+    remote_dir: /etc/ansible/facts.d
+    cust_fact_file: files/custom2.fact
+    cust_fact_deploy: true
+    cust_fact_remove: false
+
+  tasks:
+
+    - block:
+        - name: Create custom fact folder
+          file:
+            path: "{{ remote_dir }}"
+            state: directory
+            recurse: yes
+
+        - name: deploy custom2 fact file to manage host
+          copy:
+            src: "{{ cust_fact_file }}"
+            dest: "{{ remote_dir }}"
+        
+      when: cust_fact_deploy  
+
+    - name: remove file from managed hosts
+      file:
+        path: "{{ remote_dir }}/custom2.fact"
+        state: absent
+      when: cust_fact_remove

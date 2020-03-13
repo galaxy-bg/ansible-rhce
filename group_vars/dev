@@ -1,0 +1,5 @@
+# Task3 - File Content - Host group variable
+full_desc: Development
+my_packages:
+  - tcpdump
+  - mailx

@@ -1,0 +1,15 @@
+---
+- name: Task 7 - Scheduled tasks
+  hosts: dev
+  become: true
+  tasks:
+    
+    - name: A root crontab recod is created that run every hour.
+      cron:
+        name: crontab record that runs every hour - root
+        minute: 0
+        hour: "*/1"
+        user: root
+        job: "date >> /var/log/time.log"
+        cron_file: task7_cron_date
+

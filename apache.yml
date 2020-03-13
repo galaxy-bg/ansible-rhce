@@ -1,0 +1,8 @@
+---
+# Task 10 - Create and work with Roles
+- name: Install and configure Apache
+  hosts: dev
+  become: true
+
+  roles:
+    - sample-apache

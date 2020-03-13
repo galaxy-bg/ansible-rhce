@@ -1,0 +1,13 @@
+---
+- name: Task 3 - File Content
+  hosts: all
+  vars:
+    motd_file: /etc/motd
+  become: true
+
+  tasks:
+    
+    - name: replace existing motd file with text depends on host groups
+      copy:
+        content: "Welcome to {{ full_desc }} server.\n"
+        dest: "{{ motd_file }}"

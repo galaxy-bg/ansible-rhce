@@ -1,0 +1,17 @@
+---
+- name : Redhat System roles - Timesync
+  hosts: all
+  become: true
+  vars:
+    ntp1: 0.rhel.pool.ntp.org
+    ntp2: 1.rhel.pool.ntp.org
+
+    timesync_ntp_servers:
+
+      - hostname: "{{ ntp1 }}"
+        iburst: yes
+      - hostname: "{{ ntp2 }}"
+        iburst: yes
+
+  roles:
+    - rhel-system-roles.timesync

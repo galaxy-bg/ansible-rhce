@@ -1,0 +1,87 @@
+---
+# Task 6 - Create users and groups
+- name: Create users and groups
+  hosts: all
+  vars_files:
+    - vars/user_list.yml
+    - vars/vault.yml
+  
+  vars:
+    dev_group: Development
+    prod_group: Production
+    wheel_group: wheel
+
+  become: true
+
+  tasks:
+
+    - name: Create group {{ wheel_group }}
+      group:
+        name: "{{ wheel_group }}"
+        state: present
+
+    - name: Create {{ dev_group }} users
+      user:
+        name: "{{ item.username }}"
+        groups: "{{ wheel_group }}"
+        uid: "{{ item.uid }}"
+        shell: /bin/bash
+        password: "{{ user_password | password_hash('sha512') }}"
+        append: true
+      loop: "{{ users }}"
+      when:
+        - item.uid < 2000
+        - "'dev' in group_names"
+
+    - name: Create {{ prod_group }} users
+      user:
+        name: "{{ item.username }}"
+        groups: "{{ wheel_group }}"
+        uid: "{{ item.uid }}"
+        shell: /bin/bash
+        password: "{{  user_password | password_hash('sha512') }}"
+        append: true
+      loop: "{{ users }}"
+      when:
+        - item.uid > 2000
+        - "'prod' in group_names"
+
+    - name: Create {{ dev_group }} Authorized keys
+      authorized_key:
+        user: "{{ item.username }}"
+        state: present
+        key: "{{ lookup('file', 'files/id_rsa_' + item.username + '.pub') }}"
+      loop: "{{ users }}"
+      when:
+        - item.uid < 2000 
+        - "'dev' in group_names"
+
+    - name: Create {{ prod_group }} Authorized keys
+      authorized_key:
+        user: "{{ item.username }}"
+        state: present
+        key: "{{ lookup('file', 'files/id_rsa_' + item.username + '.pub') }}"
+      loop: "{{ users }}"
+      when:
+        - item.uid > 2000 
+        - "'prod' in group_names"
+
+    - name: Configure sudo for {{ dev_group }}
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: "^%{{ wheel_group }}"
+        line: "%{{ wheel_group }} ALL=(ALL) NOPASSWD: ALL"
+        validate: '/usr/sbin/visudo -cf %s'
+      when: 
+        - "'dev' in group_names"
+
+    - name: Configure sudo for {{ prod_group }}
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        regexp: "^%{{ wheel_group }}"
+        line: "%{{ wheel_group }} ALL=(ALL) NOPASSWD: ALL"
+        validate: '/usr/sbin/visudo -cf %s'
+      when:
+        - "'prod' in group_names"

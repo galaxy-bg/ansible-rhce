@@ -1,0 +1,30 @@
+---
+- name: Task 14 - User Archiving
+  hosts: prod
+  become: true
+  vars:
+    src_file: /mnt/mysql_backups/database_list.txt
+    dest_file: /mnt/mysql_backups/archive.gz
+
+  tasks:
+    
+    - name: Archive {{ src_file }}
+      archive:
+        path: "{{ src_file }}"
+        dest: "{{ dest_file }}"
+        format: gz
+
+    # Optional check file status
+    - name: check to see if the archive exists
+      stat:
+        path: "{{ dest_file }}"
+      register: archive
+
+    - name: show the arcive directory
+      debug:
+        var: archive
+
+    - name: make sure that the archive exist before proceeding
+      assert:
+        that: "'zip' in archive.stat.mimetype"
+

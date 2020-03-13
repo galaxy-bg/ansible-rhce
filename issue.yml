@@ -1,0 +1,13 @@
+---
+- name: Change /etc/issue file entry
+  hosts: dev
+  become: true
+
+  tasks:
+    - name: Find and replace single space line with This is my message!
+      lineinfile:
+        path: /etc/issue
+        regex: '^\\S$'
+        line: "{{ ansible_facts['fqdn'] }}"
+        state: present
+        backrefs: true

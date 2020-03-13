@@ -1,0 +1,13 @@
+---
+# vars file for sample-apache
+my_role_packages:
+  - httpd
+  - mod_ssl
+  - php
+  - firewalld
+my_role_services:
+  - httpd
+  - firewalld
+my_role_fw_rules:
+   - http
+   - https
