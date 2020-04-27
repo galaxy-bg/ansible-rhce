@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: true
+  gather_facts: false
+  tasks:
+    
+    - name: Create SysOps Group
+      group:
+        name: sysops
+        state: present
+      when: groups.dev is defined and inventory_hostname in groups['dev']
+
+    - name: Create sysops user
+      user:
+        name: sysops
+        comment: DevOps User
+        group: devops
+        state: present
+      when: groups.dev is defined and inventory_hostname in groups["dev"]
+

@@ -1,0 +1,15 @@
+---
+- name: Deploy custom2 facts to managed serevers
+  hosts: srva
+  become: true
+  tasks:
+    - name: register setupvar via setup module
+      setup:
+        regster: setupvar
+
+    - name: save all facts to host specific file
+      copy:
+        content: "{{ setupvar.ansible_facts }}"
+        dest: "/home/devops/{{ ansible_fqdn }}"
+      delegate_to: localhost
+

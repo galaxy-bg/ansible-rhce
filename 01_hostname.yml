@@ -1,0 +1,23 @@
+---
+- hosts: all
+  become: true
+  vars:
+    domain: lab.gmlocal
+  tasks:
+    
+    - name: Assert that domain variable is not empty
+      assert:
+        that: not (domain == "" or domain is not defined)
+        fail_msg: domain variable is not available.
+        success_msg: domain ise {{ domain }}
+
+    - name: set fqdn hostname
+      hostname:
+        name: "{{ inventory_hostname }}.{{ domain }}"
+      #when: domain is defined and inventory_hostname in groups["dev"]
+      when: domain is defined 
+
+    - name: Set shortname ( without domain )
+      hostname:
+        name: "{{ inventory_hostname }}"
+      when: domain is not defined
